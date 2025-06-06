@@ -10,7 +10,7 @@ kappa = 0.05;
 %fg = FatGraph();
 
 %% Testing create fat graph
-createFatGraph(Lx, widths, angles)
+%createFatGraph(Lx, widths, angles)
 
 %% Testing process Graph data
 
@@ -18,7 +18,7 @@ createFatGraph(Lx, widths, angles)
 
 %% Testing evolveWave
 
-evolveWave(kappa, widths, angles)
+%evolveWave(kappa, widths, angles)
 
 %% Testing processWave
 

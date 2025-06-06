@@ -125,9 +125,9 @@ function [] = processWaveData(kappa, widths, angles, options)
     
     if options.play_movie
         figure
-        for i = 1:data.options.frames+2
+        for i = 1:data.options.frames
             
-            h = reshape(data.H(:,i),size(z));
+            h = data.H(:,i);
             
             hh=h;
 
@@ -155,8 +155,7 @@ function [] = processWaveData(kappa, widths, angles, options)
             zlim([-0.15,.2])
             %caxis([min(h(:)), max(h(:))]);  % Set the color axis limits based on the data range
             xlabel('X'); ylabel('Y'); zlabel('h');
-            %title(['Time evolution of wave profile = ',num2str(t)]);
-            title('movie')
+            title(['Time evolution of wave profile = ',num2str(t)]);
             
             pause(1)
 
@@ -173,4 +172,4 @@ function [] = processWaveData(kappa, widths, angles, options)
 
 
 
-%endfunction
+endfunction

@@ -1,28 +1,17 @@
-function [ output_args ] = evolveWave(kappa, widths, angles, options)
+function [] = evolveWave(kappa, widths, angles, options)
 %EVOLVEWAVE Summary of this function goes here
 %   Detailed explanation goes here
 
-%   [fg, f_tilde, C, J, w, z] = createFatGraph(Lx, widths, angles) creates a Y-shaped
-%   fat graph with specified dimensions and computes its SC transformation.
-%
-%   [fg, f_tilde, C, J, w, z] = createFatGraph(Lx, widths, angles, options) allows
-%   customization of numerical parameters.
 %
 % Inputs:
-%   Lx      - Length of main branch (default = 10)
-%   widths  - Array of branch widths [main, branch1, branch2] (default = [1, 0.4, 0.6])
+%   kappa      - width-to-wavelenght regime (default = 0.05)
+%   widths  - Array of branch widths [main, branch1, branch2] (default = [5, 2.5, 2.5])
 %   angles  - Array of branch angles in radians (default = [0, 2*pi/3, 4*pi/3])
 %   options - Structure with optional parameters (see below)
-%
-% Outputs:
-%   fg      - FatGraph object
-%   f_tilde - SC mapping object
-%   C       - Canonical domain polygon
-%   J       - Jacobian determinant matrix
-%   w       - Grid points in canonical domain
-%   z       - Grid points in physical domain
+
 %
 % Optional parameters (options struct):
+%   .dt         - Time step size (default = 0.02) 
 %   .dxi        - Grid spacing in xi direction (default = 0.03)
 %   .dzeta      - Grid spacing in zeta direction (default = 0.065)
 %   .ep         - Domain extension parameter (default = 0.01)
@@ -35,8 +24,8 @@ function [ output_args ] = evolveWave(kappa, widths, angles, options)
     end
 
     % Default graph parameters
-    if nargin < 1 || isempty(kappa), kappa = 1; end
-    if nargin < 2 || isempty(widths), widths = [1, 0.5, 0.5]; end
+    if nargin < 1 || isempty(kappa), kappa = 0.05; end
+    if nargin < 2 || isempty(widths), widths = [5, 2.5, 2.5]; end
     if nargin < 3 || isempty(angles), angles = [0, 2*pi/3, 4*pi/3]; end
 
     % Default numerical parameters
@@ -45,7 +34,8 @@ function [ output_args ] = evolveWave(kappa, widths, angles, options)
         'dxi', 0.03, ...
         'dzeta', 0.065, ...
         'ep', 0.01, ...
-        'T', 80,...
+        'T', 90,...
+        'frames', 4,...
         'want_save', true);
 
     % Merge user options with defaults
@@ -73,7 +63,6 @@ J = data.J;
 th_zeta = data.th_zeta;
 th_xi = data.th_xi;
 
-
 % Define Gaussian pulse parameters
 lambda_f = widths(1)/kappa;
 comp_efetivo_can = alpha*lambda_f;
@@ -84,13 +73,19 @@ a = 0.1; %pulse height
 
 h = a*exp(-(Xi-xi0/2).^2/ (2 * sigma^2));
 
-u = 0;        % Initial velocity
+u = zeros(size(h));        % Initial velocity
 v = h.*J.^(1/2); %explicar essa linha
 
 %boundary cond.
-v = impermiability_v(v);
 h = neumann_correction(h);
 u = impermiability_u(u);
+v = impermiability_v(v);
+
+%% Setting wave data
+
+H = reshape(h, numel(data.J),1);
+U = reshape(u, numel(data.J),1);
+V = reshape(v, numel(data.J),1);
 
 %% Precompute the forward mapping
 %z = eval(f, w);
@@ -114,10 +109,10 @@ X2=real(z2); Y2=imag(z2);
 X3=real(z3); Y3=imag(z3);
 
 
-%% Main loop
+%% Main loop % RK4 time-stepping
 t = 0; iter=0;
+t_array = 0:dt:T;
 while t < T
-    % RK4 time-stepping
     k1_u = -dt * (circshift(h, [ -1 0]) - circshift(h, [ 1 0])) / (2 * dxi);
     k1_v = -dt * (circshift(h, [ 0 -1]) - circshift(h, [0 1])) / (2 * dzeta);
     k1_h = -dt * ((circshift(u, [ -1 0]) - circshift(u, [ 1 0])) / (2 * dxi) + (circshift(v, [ 0 -1]) - circshift(v, [ 0 1])) / (2 * dzeta))./J;
@@ -141,6 +136,14 @@ while t < T
     v = impermiability_v(v);
     h = neumann_correction(h);
     u = impermiability_u(u);
+    
+    if mod(iter,floor(numel(t_array)/options.frames))==0 || t == T-1-dt
+        
+        H = [H, reshape(h,numel(J),1)];
+        U = [U, reshape(u,numel(J),1)];
+        V = [V, reshape(v,numel(J),1)];
+        
+    end
     
     %{
     if mod(iter,200)==0 && strcmp(visual,'physical')
@@ -252,16 +255,9 @@ function h=neumann_correction(h)
     h(:, 1) = h(:, 2); % Left boundary
     h(:, end) = h(:, end-1); % Right boundary   
     
-    %h(th_zeta+2,th_xi-1:end)=h(th_zeta+1,th_xi-1:end);
-    %h(th_zeta,th_xi-1:end)=h(th_zeta-1,th_xi-1:end);
-    
     h(1, :) = h(2, :); % Bottom boundary
     h(end, :) = h(end-1, :); % Top boundary
 end
-
-
-
-
 
 end
 
