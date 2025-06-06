@@ -17,12 +17,14 @@ function [] = processWaveData(kappa, widths, angles, options)
 
     % Default numerical parameters
     default_options = struct(...
-        'dxi', 0.03, ...
-        'dzeta', 0.065, ...
         'ep', 0.01,...
         'plot_physical', false,...
         'plot_canonical', false,...
-        'play_movie', true);
+        'play_movie', true,...
+        'save_video', true,...
+        'az',-20,...
+        'el',40);
+    
 
     % Merge user options with defaults
     option_names = fieldnames(default_options);
@@ -33,12 +35,10 @@ function [] = processWaveData(kappa, widths, angles, options)
     end
 
     %% Load wave Graph
-    ang_display = round(angles, 3);
+    %ang_display = round(angles, 3);
+    ang_display = round(angles .* 1000) ./ 1000;
     data = load(['WaveData/kappa', num2str(kappa),'widths= ', mat2str(widths), 'angles= ', mat2str(ang_display), '.mat']);
-    %load(sprintf('GraphData/Lx=%.1f_widths=%s_angles=%s.mat', ...
-        %Lx, mat2str(widths), mat2str(ang_display)), ...
-        %'fg', 'f_tilde', 'C', 'J', 'w', 'z');
-    
+
     %%
     h = data.h;
     X1 = data.X1;
@@ -54,81 +54,93 @@ function [] = processWaveData(kappa, widths, angles, options)
     J = data.J;
     th_zeta = data.th_zeta;
     th_xi = data.th_xi;
-    
+
     %%
-    if options.plot_physical     
+    if options.plot_physical
     hh=h;
-    
+
     jmp = 1;
-    
+
     h1=hh(1:end,1:jmp:th_xi+1);
     h2=hh(1:th_zeta,th_xi-1:jmp:end);
     h3=hh(th_zeta+1:end,th_xi-1:jmp:end);
-    
+
     XX1 = X1(1:end,1:jmp:end);
     YY1 = Y1(1:end,1:jmp:end);
-    
+
     XX2 = X2(1:end,1:jmp:end);
     YY2 = Y2(1:end,1:jmp:end);
-    
+
     XX3 = X3(1:jmp:end,1:jmp:end);
     YY3 = Y3(1:jmp:end,1:jmp:end);
-    
+
     %subplot(1,2,1)
     mesh(XX1, YY1, h1, 'edgecolor', 'k'); hold on,
     mesh(XX2, YY2, h2, 'edgecolor', 'k');
     mesh(XX3, YY3, h3, 'edgecolor', 'k');
     hold off,
-    %view(az, el);
+    view(options.az, options.el);
     zlim([-0.15,.2])
     %caxis([min(h(:)), max(h(:))]);  % Set the color axis limits based on the data range
     xlabel('X'); ylabel('Y'); zlabel('h');
     title(['Time evolution of wave profile = ',num2str(t)]);
-    
+
     %subplot(1,2,2)
     %surf(Xi,Zeta,h)
-    
+
     drawnow;
     end
-    
-    
+
+
     if options.plot_canonical
         %
-        
+
         hh=h;
-        
+
         h1=hh(:,1:th_xi+1);
         h2=hh(1:th_zeta,th_xi-1:end);
         h3=hh(th_zeta+1:end,th_xi-1:end);
-        
+
         %subplot(1, 2, 1);
         %mesh(X1, Y1, h1, 'edgecolor', 'k'); hold on,
         %mesh(X2, Y2, h2, 'edgecolor', 'k');
         %mesh(X3, Y3, h3, 'edgecolor', 'k');
-        
+
         %hold off,
         %
         %subplot(1, 2, 2);
         mesh(xi,zeta,h)
         zlim([-0.05,a])
-        
+
         %set(gcf, 'Renderer', 'opengl');  % Better rendering quality
         %set(gca, 'FontSize', 14);        % Make axes labels crisper
         %shading interp                   % Smooth surface shading
         %lighting gouraud                 % Optional: if you use lighting
-        
+
         drawnow;
-        %frame = getframe(gcf); % Capture current figure
-        %writeVideo(vwriter, frame); % Write frame to video
-        
+
     end
     
+    
+    %% Play movie and save video
     if options.play_movie
+        if options.save_video
+            vwriter = VideoWriter(['Export/kappa',...
+                num2str(kappa),'widths= ', mat2str(widths), 'angles= ', mat2str(ang_display), '.mp4'], 'MPEG-4');
+            vwriter.FrameRate = 10;      % Adjust for desired smoothness
+            vwriter.Quality = 100;       % Max quality (optional)
+            open(vwriter);
+        end
+        
+
+        mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees'];
+
+        
         figure
         for i = 1:data.options.frames+2
-            
+
             h = reshape(data.H(:,i),size(z));
-            
+
             hh=h;
 
             jmp = 1;
@@ -151,26 +163,33 @@ function [] = processWaveData(kappa, widths, angles, options)
             mesh(XX2, YY2, h2, 'edgecolor', 'k');
             mesh(XX3, YY3, h3, 'edgecolor', 'k');
             hold off,
-            %view(az, el);
-            zlim([-0.15,.2])
+            view(options.az, options.el);
+            zlim([-0.02,.1])
             %caxis([min(h(:)), max(h(:))]);  % Set the color axis limits based on the data range
             xlabel('X'); ylabel('Y'); zlabel('h');
             %title(['Time evolution of wave profile = ',num2str(t)]);
-            title('movie')
-            
-            pause(1)
+            title(mytitle)
+      
 
-            %subplot(1,2,2)
-            %surf(Xi,Zeta,h)
+            pause(0.1)
+
 
             drawnow;
             
+            if options.save_video
+                %while counter/i < 10
+                frame = getframe(gcf); % Capture current figure
+                writeVideo(vwriter, frame); % Write frame to video
+                %counter = counter + 1;
+                %end
+            end
+
         end
-        
+
     end
-  
+    
+    if options.save_video
+       close(vwriter)
+    end
 
 
-
-
-%endfunction
