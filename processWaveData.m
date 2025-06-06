@@ -20,7 +20,7 @@ function [] = processWaveData(kappa, widths, angles, options)
         'dxi', 0.03, ...
         'dzeta', 0.065, ...
         'ep', 0.01,...
-        'plot_physical', true,...
+        'plot_physical', false,...
         'plot_canonical', false,...
         'play_movie', true);
 
@@ -124,8 +124,48 @@ function [] = processWaveData(kappa, widths, angles, options)
     end
     
     if options.play_movie
-        
-        
+        figure
+        for i = 1:data.options.frames+2
+            
+            h = reshape(data.H(:,i),size(z));
+            
+            hh=h;
+
+            jmp = 1;
+
+            h1=hh(1:end,1:jmp:th_xi+1);
+            h2=hh(1:th_zeta,th_xi-1:jmp:end);
+            h3=hh(th_zeta+1:end,th_xi-1:jmp:end);
+
+            XX1 = X1(1:end,1:jmp:end);
+            YY1 = Y1(1:end,1:jmp:end);
+
+            XX2 = X2(1:end,1:jmp:end);
+            YY2 = Y2(1:end,1:jmp:end);
+
+            XX3 = X3(1:jmp:end,1:jmp:end);
+            YY3 = Y3(1:jmp:end,1:jmp:end);
+
+            %subplot(1,2,1)
+            mesh(XX1, YY1, h1, 'edgecolor', 'k'); hold on,
+            mesh(XX2, YY2, h2, 'edgecolor', 'k');
+            mesh(XX3, YY3, h3, 'edgecolor', 'k');
+            hold off,
+            %view(az, el);
+            zlim([-0.15,.2])
+            %caxis([min(h(:)), max(h(:))]);  % Set the color axis limits based on the data range
+            xlabel('X'); ylabel('Y'); zlabel('h');
+            %title(['Time evolution of wave profile = ',num2str(t)]);
+            title('movie')
+            
+            pause(1)
+
+            %subplot(1,2,2)
+            %surf(Xi,Zeta,h)
+
+            drawnow;
+            
+        end
         
     end
   
@@ -133,4 +173,4 @@ function [] = processWaveData(kappa, widths, angles, options)
 
 
 
-endfunction
+%endfunction
