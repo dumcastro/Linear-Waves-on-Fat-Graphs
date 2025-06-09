@@ -35,7 +35,6 @@ function [] = processWaveData(kappa, widths, angles, options)
     end
 
     %% Load wave Graph
-    %ang_display = round(angles, 3);
     ang_display = round(angles .* 1000) ./ 1000;
     data = load(['WaveData/kappa', num2str(kappa),'widths= ', mat2str(widths), 'angles= ', mat2str(ang_display), '.mat']);
 

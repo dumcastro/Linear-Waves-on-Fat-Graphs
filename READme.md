@@ -1,3 +1,5 @@
+Fat graph linear wave solver.
+
 This program generates solutions for linear hyperbolic pulses propagating in "fat graphs".
 
 Start by running: runDemo.m
@@ -7,14 +9,16 @@ Directory structure:
 ├── README.md                 % Docs + tutorial
 ├── Scripts/                  % Top-level scripts
 │   ├── runDemo.m             % Basic example
-│   ├── runExperiment.m       % Reproduce specific case
 │
 ├── Functions/                % Core modular functions
-│   ├── FatGraph/
-│   ├── WaveSolver/
-│   ├── DataProcessing/
+│   ├── FatGraph/	      % A class for fat graph objects, with specific lenghts, angles and widths	
+│   ├── evolveWave/	      % Solve linear hyperbolic PDE for a given initial pulse on one of the branches
+│   ├── createFatGraph        % Create fat graph object from given geometrical arguments
+│   ├── processWaveData/      % Visualization of aspects of wave solutions
+│   ├── processGraphData/     % Visualization of aspects of graph data
 │
-├── Data/                     % Graph and wave data
+├── GraphData/                    % Stores graph data
+├── WaveData/                     % Stores wave data
 ├── External/                 % SC toolbox
 
 Dependencies:
