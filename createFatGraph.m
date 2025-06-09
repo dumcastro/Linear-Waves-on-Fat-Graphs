@@ -139,7 +139,5 @@ function [fg, f_tilde, C, J, w, z] = createFatGraph(Lx, widths, angles, options)
     if options.want_save
         ang_display = round(angles, 3);
         save(['GraphData/widths= ', mat2str(widths), 'angles= ', mat2str(ang_display), '.mat'])
-        %save(sprintf('GraphData/Lx=%.1f_widths=%s_angles=%s.mat', ...
-            %Lx, mat2str(widths), mat2str(ang_display)));
     end
 end

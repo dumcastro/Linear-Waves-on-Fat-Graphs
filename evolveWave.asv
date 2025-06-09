@@ -73,7 +73,7 @@ h = a*exp(-(Xi-xi0/2).^2/ (2 * sigma^2));
 u = zeros(size(h));        % Initial velocity
 v = h.*J.^(1/2); % necessary velocity for unidirectional solution (right-going mode only)
 
-%boundary cond. %THESE ARE TO BE FIXED TO INCLUDE NEUMANN SLIT CONDITIONS
+%boundary cond. %THESE ARE TO BE FIXED 
 h = neumann_correction(h);
 u = impermiability_u(u);
 v = impermiability_v(v);
@@ -134,7 +134,6 @@ while t < T
     h = neumann_correction(h);
     u = impermiability_u(u);
     
-    %% Saves selected number of frames
     if mod(iter,floor(numel(t_array)/options.frames))==0 || t == T-1-dt
         
         H = [H, reshape(h,numel(J),1)];
@@ -227,6 +226,8 @@ end
     if options.want_save
         ang_display = round(angles, 3);
         save(['WaveData/kappa', num2str(kappa),'widths= ', mat2str(widths), 'angles= ', mat2str(ang_display), '.mat'])
+        %save(sprintf('GraphData/Lx=%.1f_widths=%s_angles=%s.mat', ...
+            %Lx, mat2str(widths), mat2str(ang_display)));
     end
 
 
