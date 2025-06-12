@@ -39,8 +39,8 @@ function [fg, f_tilde, C, J, w, z] = createFatGraph(Lx, widths, angles, options)
 
     % Default numerical parameters
     default_options = struct(...
-        'dxi', 0.03, ...
-        'dzeta', 0.07, ...
+        'dxi', 0.1, ...
+        'dzeta', 0.1, ...
         'ep', 0.01, ...
         'want_save', true, ...
         'plot_flag', false);
@@ -78,7 +78,7 @@ function [fg, f_tilde, C, J, w, z] = createFatGraph(Lx, widths, angles, options)
     % Calculate scaling factor
     xi_lims = [min(real(vertex(C_tilde))), max(real(vertex(C_tilde)))];
     Lxi_tilde = diff(xi_lims);
-    alpha = Lxi_tilde/Lx;
+    alpha = Lxi_tilde/(2*Lx);
     C = (1/alpha)*C_tilde;
 
     %% Create computational grid
@@ -101,8 +101,8 @@ function [fg, f_tilde, C, J, w, z] = createFatGraph(Lx, widths, angles, options)
     J(J == 0) = med;
     
     %% Dividing the domain in sectors
-    node = ver(5);
-    vert = evalinv(f_tilde,node); % computing the critical node in phys space
+    node = ver(5); %physical node
+    vert = evalinv(f_tilde,node); % computing the critical node in canonical space
     vert = vert/alpha;
     targ_xi = real(vert);
     targ_zeta = imag(vert);
