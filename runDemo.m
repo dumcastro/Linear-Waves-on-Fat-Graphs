@@ -2,11 +2,11 @@
 clear all, clc, close all
 
 %% It should run a whole example: create graph, process graph data, solve wave, process wave data...
-Lx = 55;
-widths = [5, 2.5, 2.5];
+Lx = 50;
+widths = [5, 5, 5];
 %angles = [0, pi - pi/12, pi+pi/12];
-angles = [0, pi/2, 3*pi/2];
-kappa = 0.05;
+angles = [0, pi - pi/30, pi+pi/3];
+kappa = 0.06;
 %% Testing FatGraph
 %fg = FatGraph();
 
@@ -15,12 +15,12 @@ kappa = 0.05;
 
 %% Testing process Graph data
 
-%processGraphData()
+processGraphData(Lx, widths, angles)
 
 %% Testing evolveWave
 
-evolveWave(kappa, widths, angles)
+%evolveWave(kappa, widths, angles)
 
 %% Testing processWave
 
-processWaveData(kappa, widths, angles)
+%processWaveData(kappa, widths, angles)
