@@ -20,8 +20,9 @@ function [] = processWaveData(kappa, widths, angles, options)
         'ep', 0.01,...
         'plot_physical', false,...
         'plot_canonical', false,...
-        'play_movie', true,...
-        'save_video', true,...
+        'play_movie_phys', false,...
+        'play_movie_canonical', true,...
+        'save_video', false,...
         'az',-20,...
         'el',40);
     
@@ -108,7 +109,10 @@ function [] = processWaveData(kappa, widths, angles, options)
         %hold off,
         %
         %subplot(1, 2, 2);
-        mesh(xi,zeta,h)
+        
+        
+        
+        mesh(real(data.data.w),imag(data.data.w),h)
         zlim([-0.05,a])
 
         %set(gcf, 'Renderer', 'opengl');  % Better rendering quality
@@ -122,7 +126,7 @@ function [] = processWaveData(kappa, widths, angles, options)
     
     
     %% Play movie and save video
-    if options.play_movie
+    if options.play_movie_phys
         if options.save_video
             vwriter = VideoWriter(['Export/kappa',...
                 num2str(kappa),'widths= ', mat2str(widths), 'angles= ', mat2str(ang_display), '.mp4'], 'MPEG-4');
@@ -170,7 +174,7 @@ function [] = processWaveData(kappa, widths, angles, options)
             title(mytitle)
       
 
-            pause(0.1)
+            pause(1)
 
 
             drawnow;
@@ -186,6 +190,45 @@ function [] = processWaveData(kappa, widths, angles, options)
         end
 
     end
+    
+    
+    %% Animation in canonical coordinates
+    if options.play_movie_canonical
+        
+        mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees: Canonical domain'];
+
+        
+        figure
+        for i = 1:data.options.frames+2
+
+        h = reshape(data.H(:,i),size(z));
+            
+        %hh=h;
+
+        %h1=hh(:,1:th_xi+1);
+        %h2=hh(1:th_zeta,th_xi-1:end);
+        %h3=hh(th_zeta+1:end,th_xi-1:end);
+
+        %subplot(1, 2, 1);
+        %mesh(X1, Y1, h1, 'edgecolor', 'k'); hold on,
+        %mesh(X2, Y2, h2, 'edgecolor', 'k');
+        %mesh(X3, Y3, h3, 'edgecolor', 'k');
+
+        %hold off,
+        %
+        %subplot(1, 2, 2);
+        mesh(real(data.data.w),imag(data.data.w),h)
+        zlim([-0.05,0.1])
+
+        
+        title(mytitle)
+        drawnow;
+        
+        pause(0.03)
+        end
+        
+    end
+    
     
     if options.save_video
        close(vwriter)

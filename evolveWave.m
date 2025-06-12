@@ -30,8 +30,8 @@ function [] = evolveWave(kappa, widths, angles, options)
     default_options = struct(...
         'dt', 0.02,...
         'ep', 0.01, ...
-        'T', 115,...
-        'frames', 25,...
+        'T', 140,...
+        'frames', 22,...
         'want_save', true);
 
     % Merge user options with defaults
@@ -53,6 +53,7 @@ dxi = data.options.dxi;
 dzeta = data.options.dzeta;
 alpha = data.alpha;
 z = data.z;
+w = data.w;
 xi_lims = data.xi_lims;
 Xi = data.Xi;
 J = data.J;
@@ -133,6 +134,22 @@ while t < T
     v = impermiability_v(v);
     h = neumann_correction(h);
     u = impermiability_u(u);
+    
+    
+    %% Neumann boundary correction at the slit
+    %{
+    % Apply partial barrier - only for rows above barrier_end
+    for j = th_xi:xi_lims(2)
+        % Upper boundary of slit
+        h(j,th_zeta) = h(j,th_zeta+1);
+        v(j,th_zeta) = 0;
+
+        % Lower boundary of slit
+        h(j,th_zeta-1) = h(j,th_zeta-2);
+        v(j,th_zeta-1) = 0;
+    end
+    %}
+
     
     %% Saves selected number of frames
     if mod(iter,floor(numel(t_array)/options.frames))==0 || t == T-1-dt
