@@ -17,17 +17,7 @@ function [] = processGraphData(Lx, widths, angles, options)
 %   angles  - Array of branch angles in radians (default = [0, 2*pi/3, 4*pi/3])
 %   options - Structure with optional parameters (see below)
 %
-% Outputs:
-%   fg      - FatGraph object
-%   f_tilde - SC mapping object
-%   C       - Canonical domain polygon
-%   J       - Jacobian determinant matrix
-%   w       - Grid points in canonical domain
-%   z       - Grid points in physical domain
-%
 % Optional parameters (options struct):
-%   .dxi        - Grid spacing in xi direction (default = 0.03)
-%   .dzeta      - Grid spacing in zeta direction (default = 0.065)
 %   .ep         - Domain extension parameter (default = 0.01)
 %   .want_save  - Flag to save results (default = false)
 %   .plot_flag  - Flag to generate plots (default = true)
@@ -44,11 +34,10 @@ function [] = processGraphData(Lx, widths, angles, options)
 
     % Default numerical parameters
     default_options = struct(...
-        'dxi', 0.03, ...
-        'dzeta', 0.065, ...
         'ep', 0.01,...
         'plotJ', true,...
-        'plotMap', false);
+        'plotMap', false,...
+        'visualizeGrid', true);
 
     % Merge user options with defaults
     option_names = fieldnames(default_options);
@@ -61,23 +50,20 @@ function [] = processGraphData(Lx, widths, angles, options)
     %% Load fat Graph
     ang_display = round(angles, 3);
     data = load(['GraphData/widths= ', mat2str(widths), 'angles= ', mat2str(ang_display), '.mat']);
-    %load(sprintf('GraphData/Lx=%.1f_widths=%s_angles=%s.mat', ...
-        %Lx, mat2str(widths), mat2str(ang_display)), ...
-        %'fg', 'f_tilde', 'C', 'J', 'w', 'z');
 
     %% Plot results if requested
     if options.plotMap
         figure;
         subplot(1, 3, 1);
-        plot(P, 'b', 'LineWidth', 2, 'k');
+        plot(data.P, 'b', 'LineWidth', 2, 'k');
         title('Physical Region');
 
         subplot(1, 3, 2);
-        plot(C_tilde, 'r', 'LineWidth', 2);
+        plot(data.C_tilde, 'r', 'LineWidth', 2);
         title('Numerical canonical domain');
 
         subplot(1, 3, 3);
-        plot(C, 'y', 'LineWidth', 2);
+        plot(data.C, 'y', 'LineWidth', 2);
         title('Canonical domain width = 1');
     end
     
@@ -89,5 +75,21 @@ function [] = processGraphData(Lx, widths, angles, options)
         ylabel('Imaginary Axis');
         title('Jacobian Determinant of SC Transformation');
     end
+    
+    if options.visualizeGrid
+        
+        
+        % Visualize with scatter
+        figure;
+        scatter(data.Xi(:), data.Zeta(:), 50, 'filled');  % Flatten grids and plot
+        axis equal;
+        title('Meshgrid Visualization');
+        xlabel('X'); ylabel('Y');
+        grid on; hold on,
+        
+        scatter(real(data.vert), imag(data.vert), 'red', 'Filled')
+    end
+    
+    p = 32;
 end
 
