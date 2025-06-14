@@ -53,7 +53,7 @@ classdef FatGraph < handle
             w3 = obj.widths(3);
             a2 = pi + obj.angles(2);
             a3 = pi + obj.angles(3);
-            slit = obj.widths(2);
+            slit = obj.widths(1)*obj.widths(2)/(obj.widths(2)+obj.widths(3)); %zeta coordenate of slit position
 
             % Calculate intermediate points
             Q1 = rl + rl*exp(1i*a2) + w2*exp(1i*(a2+pi/2));
