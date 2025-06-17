@@ -1,0 +1,31 @@
+%% Run full experiment
+clear all, clc, close all
+
+parameter_station % Go through prefered secondary arguments
+
+%% Main arguments
+widths = [5,2.5,2.5];
+angles = [0, pi - pi/3, pi+pi/3];
+
+lambda_f = 20;
+
+kappa = widths(1)/lambda_f;
+%lambda_f = widths(1)/kappa;
+
+travel_distance = 4;
+
+Lx = lambda_f*(travel_distance+3)/2;% Length of the domain
+%Lx = 40;
+
+%% Create fat graph: generates physical and canonical domain grids through SC
+createFatGraph(Lx, widths, angles, graph_options)
+
+%% Process Graph data: can view graph data, Jacobian of SC map, node position
+processGraphData(Lx, widths, angles, graph_vis_options)
+
+%% Time-step evolution from initial pulse (RK4)
+evolveWave(kappa, widths, angles, wave_options)
+
+%% Visualize and process wave data: animation, plots, create video
+
+processWaveData(kappa, widths, angles, wave_vis_options)

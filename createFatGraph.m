@@ -1,4 +1,4 @@
-function [fg, f_tilde, C, J, w, z] = createFatGraph(Lx, widths, angles, options)
+function [alpha] = createFatGraph(Lx, widths, angles, options)
 %CREATEFATGRAPH Creates a fat graph and computes Schwarz-Christoffel mapping
 %   [fg, f_tilde, C, J, w, z] = createFatGraph(Lx, widths, angles) creates a Y-shaped
 %   fat graph with specified dimensions and computes its SC transformation.
@@ -39,8 +39,8 @@ function [fg, f_tilde, C, J, w, z] = createFatGraph(Lx, widths, angles, options)
 
     % Default numerical parameters
     default_options = struct(...
-        'dxi', 0.1, ...
-        'dzeta', 0.1, ...
+        'dxi', 0.2, ...
+        'dzeta', 0.2, ...
         'ep', 0.01, ...
         'want_save', true, ...
         'plot_flag', false);
@@ -77,8 +77,12 @@ function [fg, f_tilde, C, J, w, z] = createFatGraph(Lx, widths, angles, options)
 
     % Calculate scaling factor
     xi_lims = [min(real(vertex(C_tilde))), max(real(vertex(C_tilde)))];
-    Lxi_tilde = diff(xi_lims);
-    alpha = Lxi_tilde/(2*Lx);
+    zeta_lims = [min(imag(vertex(C_tilde))), max(imag(vertex(C_tilde)))];
+    %Lxi_tilde = diff(xi_lims);
+    Lzeta_tilde = diff(zeta_lims);
+    %alpha1 = Lxi_tilde/(2*Lx);
+    alpha = Lzeta_tilde/widths(1); % This is the scaling factor
+    
     C = (1/alpha)*C_tilde;
 
     %% Create computational grid
