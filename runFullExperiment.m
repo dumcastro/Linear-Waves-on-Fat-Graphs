@@ -3,7 +3,7 @@ clear all, clc, close all
 
 %% Main arguments
 widths = [5, 2.5, 2.5];
-angles = [0, pi - pi/24, pi + pi/3];
+angles = [0, pi - pi/24, pi + pi/3]; %angles calculated 
 kappa = 0.2;
 
 lambda_f = widths(1)/kappa;
@@ -40,7 +40,7 @@ catch %ME_wave
             createFatGraph(Lx, widths, angles, graph_options);
 
             % Optional: process graph data (e.g., compute Jacobian or visualize)
-            %processGraphData(Lx, widths, angles, graph_vis_options);
+            processGraphData(Lx, widths, angles, graph_vis_options);
 
             % Now try evolving and processing again
             evolveWave(kappa, widths, angles, wave_options);
