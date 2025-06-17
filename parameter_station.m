@@ -3,12 +3,12 @@
 %% Wave parameters
 wave_options = struct();
 wave_options.T = 50; %Final time of execution
-wave_options.point_source = false;
+wave_options.point_source = true;
 
 %% Wave view options
 wave_vis_options = struct();
-wave_vis_options.play_movie_phys = true;
-wave_vis_options.play_movie_canonical = false;
+wave_vis_options.play_movie_phys = false;
+wave_vis_options.play_movie_canonical = true;
 
 
 %% Graph parameters

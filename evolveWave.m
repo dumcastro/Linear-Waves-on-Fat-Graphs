@@ -29,7 +29,7 @@ function [] = evolveWave(kappa, widths, angles, options)
     % Default numerical parameters
     default_options = struct(...
         'dt', 0.02,...
-        'T', 100,...
+        'T', 200,...
         'travel_distance', 20,...
         'frames', 25,...
         'want_save', true,...
@@ -52,7 +52,7 @@ dt = options.dt;
 T = options.T;
 dxi = data.options.dxi;
 dzeta = data.options.dzeta;
-alpha = data.alpha;
+%alpha = data.alpha;
 z = data.z;
 w = data.w;
 xi_lims = data.xi_lims;
@@ -81,17 +81,16 @@ u = zeros(size(h));        % Initial velocity
 v = h.*J.^(1/2); % necessary velocity for unidirectional solution (right-going mode only)
 
 if options.point_source
-    h  = 20*a*exp(-((Xi-2*xi0+xi0/4).^2)/40 - (Zeta-zeta0/3).^2)/(10 * sigma^2);
+    h  = 20*a*exp(-((Xi-2*xi0+xi0/4).^2)/40 - (Zeta-zeta0/3).^2)/(20 * sigma^2);
     v = u;
 end
 
 
-
-
-%boundary cond. %THESE ARE TO BE FIXED TO INCLUDE NEUMANN SLIT CONDITIONS
 h = neumann_correction(h);
 u = impermiability_u(u);
 v = impermiability_v(v);
+
+[h, u, v] = enforce_barrier(h, u, v, th_zeta, th_xi);  % Enforce slit barrier
 
 %% Setting wave data
 
@@ -130,12 +129,13 @@ plot3([data.xi(th_xi) data.xi(end)], [data.zeta(th_zeta) data.zeta(th_zeta)], [0
 dist = 0;
 t = 0; iter=0;
 t_array = 0:dt:T;
+tol = 0.05*a;
 %while t < T
-while dist < options.travel_distance*comp_efetivo_can
+%while dist < options.travel_distance*comp_efetivo_can
+while max(h(:, end)) < tol
     %h_pre = h;
     %u_pre = u;
     %v_pre = v;
-    
     
     k1_u = -dt * (circshift(h, [ -1 0]) - circshift(h, [ 1 0])) / (2 * dxi);
     k1_v = -dt * (circshift(h, [ 0 -1]) - circshift(h, [0 1])) / (2 * dzeta);
@@ -147,8 +147,6 @@ while dist < options.travel_distance*comp_efetivo_can
     v1 = v + 0.5 * k1_v;
     
     [h1, u1, v1] = enforce_barrier(h1, u1, v1, th_zeta, th_xi);  % Enforce slit barrier on partial rk4 sums
-    
-    
     
     k2_u = -dt * (circshift(h1, [ -1 0]) - circshift(h1, [ 1 0])) / (2 * dxi);
     k2_v = -dt * (circshift(h1, [ 0 -1]) - circshift(h1, [ 0 1])) / (2 * dzeta);
@@ -187,7 +185,7 @@ while dist < options.travel_distance*comp_efetivo_can
     h = neumann_correction(h);
     u = impermiability_u(u);
     
-    [h, u, v] = enforce_barrier(h, u, v, th_zeta, th_xi);  % Enforce slit barrier on partial rk4 sums
+    [h, u, v] = enforce_barrier(h, u, v, th_zeta, th_xi);  % Enforce slit barrier
     
     
     
@@ -306,8 +304,10 @@ while dist < options.travel_distance*comp_efetivo_can
     dist = abs(xi0 - x0f); %gets distance between current and initial peak positions
     
     iter=iter+1;
+    max(h(:, end))
     
     if t > T
+        message = 'Exceeded final time ceiling'
         break
     end
 end
@@ -317,24 +317,20 @@ end
         ang_display = round(angles, 3);
         save(['WaveData/kappa', num2str(kappa),'widths= ', mat2str(widths), 'angles= ', mat2str(ang_display), '.mat'])
     end
-
-    
-    
+  
 % Aux functions    
    
 %% Slit boundary condition function
 function [h,u, v] = enforce_barrier(h, u, v, b1, b2)
     % Strict barrier enforcement
     h(b1+1,b2:end) = h(b1+2,b2:end);   % h continues smoothly
-    %u(b1+1,b2:end) = 0;
+    u(b1+1,b2:end) = 0;
     v(b1+1,b2:end) = 0;
     
     h(b1-1, b2:end) = h(b1, b2:end); % h continues smoothly
-    %u(b1,b2:end) = 0;
+    u(b1,b2:end) = 0;
     v(b1,b2:end) = 0;
-    
 end
-
 
 
 %% Exterior boundary contidtion functions

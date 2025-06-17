@@ -54,7 +54,7 @@ function [alpha] = createFatGraph(Lx, widths, angles, options)
     end
 
     %% Create fat graph object
-    fg = FatGraph(Lx, widths, angles);
+    fg = FatGraph(Lx, widths, angles)
 
     %% Process polygon vertices
     ver = fg.complex_vertices;
