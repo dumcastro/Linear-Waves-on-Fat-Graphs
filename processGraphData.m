@@ -76,9 +76,9 @@ function [] = processGraphData(Lx, widths, angles, options)
         title('Jacobian Determinant of SC Transformation');
     end
     
+
+%% Visualize Grid
     if options.visualizeGrid
-        
-        
         % Visualize with scatter
         figure;
         scatter(data.Xi(:), data.Zeta(:), 50, 'filled');  % Flatten grids and plot
@@ -89,7 +89,5 @@ function [] = processGraphData(Lx, widths, angles, options)
         
         scatter(real(data.vert), imag(data.vert), 'red', 'Filled')
     end
-    
-    p = 32;
 end
 

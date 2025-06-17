@@ -17,7 +17,6 @@ function [] = processWaveData(kappa, widths, angles, options)
 
     % Default numerical parameters
     default_options = struct(...
-        'ep', 0.01,...
         'plot_physical', false,...
         'plot_canonical', false,...
         'play_movie_phys', false,...
@@ -140,7 +139,7 @@ function [] = processWaveData(kappa, widths, angles, options)
 
         
         figure
-        for i = 1:data.options.frames+2
+        for i = 1:data.options.frames-2
 
             h = reshape(data.H(:,i),size(z));
 
@@ -167,7 +166,7 @@ function [] = processWaveData(kappa, widths, angles, options)
             mesh(XX3, YY3, h3, 'edgecolor', 'k');
             hold off,
             view(options.az, options.el);
-            zlim([-0.02,.1])
+            zlim([-0.02,.15])
             %caxis([min(h(:)), max(h(:))]);  % Set the color axis limits based on the data range
             xlabel('X'); ylabel('Y'); zlabel('h');
             %title(['Time evolution of wave profile = ',num2str(t)]);
@@ -196,11 +195,10 @@ function [] = processWaveData(kappa, widths, angles, options)
     if options.play_movie_canonical
         
         mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees: Canonical domain'];
-
-        
+   
         figure
-        for i = 1:data.options.frames+2
 
+        for i = 1:data.options.frames-2
         h = reshape(data.H(:,i),size(z));
             
         %hh=h;
@@ -224,7 +222,8 @@ function [] = processWaveData(kappa, widths, angles, options)
         title(mytitle)
         drawnow;
         
-        pause(0.03)
+
+        pause(0.1)
         end
         
     end
