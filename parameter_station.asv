@@ -1,0 +1,12 @@
+%% Parameter wall
+
+%% Wave parameters
+wave_options = struct();
+wave_options.T = 50; %Final time of execution
+
+wave_vis_options = struct();
+
+%% Graph parameters
+graph_options = struct();
+
+%% Graph view options
