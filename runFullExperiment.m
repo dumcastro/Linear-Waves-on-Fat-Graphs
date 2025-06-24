@@ -3,8 +3,8 @@ clear all, clc, close all
 
 %% Main arguments
 widths = [5, 2.5, 2.5];
-angles = [0, pi - pi/24, pi + pi/3]; %angles calculated 
-kappa = 0.2;
+angles = [0, pi - pi/12, pi + pi/12]; %angles calculated 
+kappa = 0.1;
 
 lambda_f = widths(1)/kappa;
 travel_distance = 3;

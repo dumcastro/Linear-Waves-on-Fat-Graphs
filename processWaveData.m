@@ -22,6 +22,8 @@ function [] = processWaveData(kappa, widths, angles, options)
         'play_movie_phys', false,...
         'play_movie_canonical', true,...
         'save_video', false,...
+        'jmp_xi', 1,...
+        'jmp_zeta', 1,...
         'az',-20,...
         'el',40);
     
@@ -137,33 +139,40 @@ function [] = processWaveData(kappa, widths, angles, options)
 
         mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees'];
 
+        tmp = size(data.H);
+        
         
         figure
-        for i = 1:data.options.frames-2
+        %for i = 1:data.options.frames-2
+        for i = 1:tmp(2)
 
             h = reshape(data.H(:,i),size(z));
 
             hh=h;
 
-            jmp = 1;
+            jmp = options.jmp_xi;
 
-            h1=hh(1:end,1:jmp:th_xi+1);
+            h1=hh(1:end,[1:jmp:th_xi+1,th_xi]);
             h2=hh(1:th_zeta,th_xi-1:jmp:end);
             h3=hh(th_zeta+1:end,th_xi-1:jmp:end);
 
-            XX1 = X1(1:end,1:jmp:end);
-            YY1 = Y1(1:end,1:jmp:end);
+            XX1 = X1(1:end,[1:jmp:end, end]);
+            YY1 = Y1(1:end,[1:jmp:end, end]);
 
             XX2 = X2(1:end,1:jmp:end);
             YY2 = Y2(1:end,1:jmp:end);
 
-            XX3 = X3(1:jmp:end,1:jmp:end);
-            YY3 = Y3(1:jmp:end,1:jmp:end);
-
-            %subplot(1,2,1)
+            XX3 = X3(1:end,1:jmp:end);
+            YY3 = Y3(1:end,1:jmp:end);
+            
+            %% Debug
+            %---------
+            h1 = zeros(size(h1));
+            h2 = zeros(size(h2));
+            %---------
             mesh(XX1, YY1, h1, 'edgecolor', 'k'); hold on,
             mesh(XX2, YY2, h2, 'edgecolor', 'k');
-            mesh(XX3, YY3, h3, 'edgecolor', 'k');
+            %mesh(XX3, YY3, h3, 'edgecolor', 'k');   
             hold off,
             view(options.az, options.el);
             zlim([-0.02,.15])
@@ -173,7 +182,7 @@ function [] = processWaveData(kappa, widths, angles, options)
             title(mytitle)
       
 
-            pause(1)
+            pause(0.1)
 
 
             drawnow;
