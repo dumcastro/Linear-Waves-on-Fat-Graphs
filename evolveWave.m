@@ -75,7 +75,6 @@ zeta0 = ((zeta_lims(2))+(zeta_lims(1)))/ 2;
 
 a = 0.1; %pulse height
 
-
 h = a*exp(-(Xi-xi0/2).^2/ (2 * sigma^2));
 u = zeros(size(h));        % Initial velocity
 v = h.*J.^(1/2); % necessary velocity for unidirectional solution (right-going mode only)
@@ -84,7 +83,6 @@ if options.point_source
     h  = 20*a*exp(-((Xi-2*xi0+xi0/4).^2)/40 - (Zeta-zeta0/3).^2)/(20 * sigma^2);
     v = u;
 end
-
 
 h = neumann_correction(h);
 u = impermiability_u(u);
@@ -289,7 +287,7 @@ while max(h(:, end)) < tol
     max(h(:, end))
     
     if t > T
-        message = 'Exceeded final time ceiling'
+        message = ['Exceeded final time ceiling. T = ', num2str(T)]
         break
     end
 end
