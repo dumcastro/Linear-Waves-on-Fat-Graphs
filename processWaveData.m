@@ -98,9 +98,9 @@ function [] = processWaveData(kappa, widths, angles, options)
 
         hh=h;
 
-        h1=hh(:,1:th_xi+1);
-        h2=hh(1:th_zeta,th_xi-1:end);
-        h3=hh(th_zeta+1:end,th_xi-1:end);
+        h1=hh(:,1:th_xi);
+        h2=hh(1:th_zeta,th_xi:end);
+        h3=hh(th_zeta+1:end,th_xi:end);
 
         %subplot(1, 2, 1);
         %mesh(X1, Y1, h1, 'edgecolor', 'k'); hold on,
@@ -151,28 +151,37 @@ function [] = processWaveData(kappa, widths, angles, options)
             hh=h;
 
             jmp = options.jmp_xi;
+            jmpz = options.jmp_zeta;
+            
+            ngrid = size(h);
+            
+            [Nzeta, Nxi] = deal(ngrid(1),ngrid(2));
+            
+            zindexes1 = [1:jmpz:th_zeta, th_zeta, th_zeta+1:jmpz:Nzeta];
+            zindexes2 = [1:jmpz:th_zeta, th_zeta];
+            %zindexes3 = th_zeta+1:jmpz:Nzeta;
 
-            h1=hh(1:end,[1:jmp:th_xi+1,th_xi]);
-            h2=hh(1:th_zeta,th_xi-1:jmp:end);
-            h3=hh(th_zeta+1:end,th_xi-1:jmp:end);
+            h1=hh(zindexes1,[1:jmp:th_xi,th_xi]);
+            h2=hh(zindexes2,th_xi:jmp:end);
+            h3=hh(th_zeta+1:jmpz:end,th_xi:jmp:end);
 
-            XX1 = X1(1:end,[1:jmp:end, end]);
-            YY1 = Y1(1:end,[1:jmp:end, end]);
+            XX1 = X1(zindexes1,[1:jmp:end, end]);
+            YY1 = Y1(zindexes1,[1:jmp:end, end]);
 
-            XX2 = X2(1:end,1:jmp:end);
-            YY2 = Y2(1:end,1:jmp:end);
+            XX2 = X2(zindexes2,1:jmp:end);
+            YY2 = Y2(zindexes2,1:jmp:end);
 
-            XX3 = X3(1:end,1:jmp:end);
-            YY3 = Y3(1:end,1:jmp:end);
+            XX3 = X3(1:jmpz:end,1:jmp:end);
+            YY3 = Y3(1:jmpz:end,1:jmp:end);
             
             %% Debug
             %---------
-            h1 = zeros(size(h1));
-            h2 = zeros(size(h2));
+            %h1 = zeros(size(h1));
+            %h2 = zeros(size(h2));
             %---------
             mesh(XX1, YY1, h1, 'edgecolor', 'k'); hold on,
             mesh(XX2, YY2, h2, 'edgecolor', 'k');
-            %mesh(XX3, YY3, h3, 'edgecolor', 'k');   
+            mesh(XX3, YY3, h3, 'edgecolor', 'k');   
             hold off,
             view(options.az, options.el);
             zlim([-0.02,.15])

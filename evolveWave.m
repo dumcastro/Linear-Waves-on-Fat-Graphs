@@ -105,9 +105,9 @@ V = reshape(v, numel(data.J),1);
 %z3 = eval(f, w3);
 %}
 
-z1=z(:,1:th_xi+1); %branch 1 
-z2=z(1:th_zeta,th_xi-1:end); %branch 2
-z3=z(th_zeta+1:end,th_xi-1:end); %branch 3
+z1=z(:,1:th_xi); %branch 1 
+z2=z(1:th_zeta,th_xi:end); %branch 2
+z3=z(th_zeta+1:end,th_xi:end); %branch 3
 
 % Extract the real and imaginary parts of the forward-mapped grid
 X = real(z);

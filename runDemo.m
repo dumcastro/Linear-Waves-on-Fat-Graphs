@@ -3,8 +3,9 @@ clear all, clc, close all
 
 %% Main arguments
 widths = [5, 2.5, 2.5];
-angles = [0, pi - pi/12, pi + pi/12]; %angles calculated 
-kappa = 0.1;
+%angles = [0, pi - pi/2 + pi/24, pi + pi/2 - pi/24]; %angles calculated
+angles = [0, pi - pi/6, pi + pi/6];
+kappa = 0.15;
 
 lambda_f = widths(1)/kappa;
 travel_distance = 3;
@@ -17,11 +18,11 @@ parameter_station % Go through preferred secondary arguments
 %fg = FatGraph(Lx, widths, angles)
 
 %% Testing create fat graph
-%createFatGraph(Lx, widths, angles,graph_options);
+createFatGraph(Lx, widths, angles,graph_options);
 
 %% Testing process Graph data
 
-%processGraphData(Lx, widths, angles,graph_vis_options)
+processGraphData(Lx, widths, angles,graph_vis_options)
 
 %% Testing evolveWave
 
