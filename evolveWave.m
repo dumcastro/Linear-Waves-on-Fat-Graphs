@@ -305,11 +305,11 @@ function [h,u, v] = enforce_barrier(h, u, v, b1, b2)
     % Strict barrier enforcement
     h(b1+1,b2:end) = h(b1+2,b2:end);   % h continues smoothly
     u(b1+1,b2:end) = 0;
-    v(b1+1,b2:end) = 0;
+    %v(b1+1,b2:end) = 0;
     
     h(b1-1, b2:end) = h(b1, b2:end); % h continues smoothly
     u(b1,b2:end) = 0;
-    v(b1,b2:end) = 0;
+    %v(b1,b2:end) = 0;
 end
 
 

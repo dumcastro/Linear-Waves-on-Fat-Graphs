@@ -105,8 +105,7 @@ function [alpha] = createFatGraph(Lx, widths, angles, options)
     
     %% Dividing the domain in sectors
     node = ver(5); %physical node
-    vert = evalinv(f_tilde,node); % computing the critical node in canonical space
-    vert = vert/alpha;
+    vert = evalinv(f_tilde,node)/alpha; % computing the critical node in canonical space
     targ_xi = real(vert);
     targ_zeta = imag(vert);
 
