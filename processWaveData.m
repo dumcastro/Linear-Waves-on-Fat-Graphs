@@ -184,7 +184,7 @@ function [] = processWaveData(kappa, widths, angles, options)
             mesh(XX3, YY3, h3, 'edgecolor', 'k');   
             hold off,
             view(options.az, options.el);
-            zlim([-0.02,.15])
+            zlim([-0.02,.12])
             %caxis([min(h(:)), max(h(:))]);  % Set the color axis limits based on the data range
             xlabel('X'); ylabel('Y'); zlabel('h');
             %title(['Time evolution of wave profile = ',num2str(t)]);
@@ -216,7 +216,8 @@ function [] = processWaveData(kappa, widths, angles, options)
    
         figure
 
-        for i = 1:data.options.frames-2
+        %for i = 1:data.options.frames-2
+        for i = 1:tmp(2)
         h = reshape(data.H(:,i),size(z));
             
         %hh=h;

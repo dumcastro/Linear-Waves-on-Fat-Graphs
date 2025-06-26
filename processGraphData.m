@@ -88,6 +88,10 @@ function [] = processGraphData(Lx, widths, angles, options)
         grid on; hold on,
         
         scatter(real(data.vert), imag(data.vert), 'red', 'Filled')
+
+        scatter(real(data.w(data.th_zeta,data.th_xi)), imag(data.w(data.th_zeta,data.th_xi)), 'green', 'Filled')
+
+
     end
 end
 
