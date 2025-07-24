@@ -4,9 +4,10 @@ clear all, clc, close all
 addpath('External/')
 
 %% Main arguments
-widths = [5, 2.5, 2.5];
-%angles = [0, pi - pi/2 + pi/24, pi + pi/2 - pi/24]; %angles calculated
-angles = [0, pi - pi/2 + pi/12, pi + pi/2 - pi/12];
+widths = [5, 2, 3];
+angles = [0, pi - pi/12, pi+pi/3];
+%angles = [0, pi - pi/2 + pi/12, pi + pi/2 - pi/12];
+
 kappa = 0.1;
 
 lambda_f = widths(1)/kappa;
@@ -24,12 +25,16 @@ parameter_station % Go through preferred secondary arguments
 
 %% Testing process Graph data
 
-%processGraphData(Lx, widths, angles,graph_vis_options)
+processGraphData(Lx, widths, angles,graph_vis_options)
 
 %% Testing evolveWave
-
-%evolveWave(kappa, widths, angles,wave_options)
-
+%{
+if numel(widths) == 3
+evolveWave(kappa, widths, angles,wave_options)
+else
+evolveWave2(kappa, widths, angles,wave_options)    
+end
+%}
 %% Testing processWave
 
 processWaveData(kappa, widths, angles,wave_vis_options)

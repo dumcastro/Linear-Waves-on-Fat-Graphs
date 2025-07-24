@@ -60,12 +60,21 @@ function [alpha] = createFatGraph(Lx, widths, angles, options)
     ver = fg.complex_vertices;
 
     % Apply small extension to avoid singularities
+    if numel(widths) == 3
     ver(2) = ver(2) - options.ep*1i;
     ver(5) = ver(5) + options.ep;
     ver(8) = ver(8) + options.ep*1i;
+    elseif numel(widths) == 2
+    ver(2) = ver(2) - options.ep*1i;
+    ver(5) = ver(5) + options.ep*1i;
+    end
 
     %% Schwarz-Christoffel mapping
+    if numel(widths) == 3
     sang = [0.5000, 1, 0.5000, 0.5000, 2.0000, 0.5000, 0.5000, 1.0000, 0.5000];
+    else
+    sang = [0.5000, 1, 0.5000, 0.5000, 1, 0.5000];  
+    end
     P = polygon(ver);
     %P = polyedit(P);
 

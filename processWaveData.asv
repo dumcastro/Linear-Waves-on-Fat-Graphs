@@ -21,6 +21,7 @@ function [] = processWaveData(kappa, widths, angles, options)
         'plot_canonical', false,...
         'play_movie_phys', false,...
         'play_movie_canonical', true,...
+        'twoD_plot', true,...
         'save_video', false,...
         'jmp_xi', 1,...
         'jmp_zeta', 1,...
@@ -100,7 +101,7 @@ function [] = processWaveData(kappa, widths, angles, options)
 
         h1=hh(:,1:th_xi);
         h2=hh(1:th_zeta,th_xi:end);
-        h3=hh(th_zeta+1:end,th_xi-1:end);
+        h3=hh(th_zeta+1:end,th_xi:end);
 
         %subplot(1, 2, 1);
         %mesh(X1, Y1, h1, 'edgecolor', 'k'); hold on,
@@ -137,7 +138,7 @@ function [] = processWaveData(kappa, widths, angles, options)
         end
         
 
-        mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees'];
+        %mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees'];
 
         tmp = size(data.H);
         
@@ -153,20 +154,23 @@ function [] = processWaveData(kappa, widths, angles, options)
             jmp = options.jmp_xi;
             jmpz = options.jmp_zeta;
             
+            ngrid = size(h);
+            
+            [Nzeta, Nxi] = deal(ngrid(1),ngrid(2));
             
             zindexes1 = [1:jmpz:th_zeta, th_zeta, th_zeta+1:jmpz:Nzeta];
             zindexes2 = [1:jmpz:th_zeta, th_zeta];
-            zindexes3 = th_zeta+1:jmpz:Nzeta;
+            %zindexes3 = th_zeta+1:jmpz:Nzeta;
 
             h1=hh(zindexes1,[1:jmp:th_xi,th_xi]);
-            h2=hh([1:jmpz:th_zeta,th_zeta],th_xi:jmp:end);
+            h2=hh(zindexes2,th_xi:jmp:end);
             h3=hh(th_zeta+1:jmpz:end,th_xi:jmp:end);
 
-            XX1 = X1([1:jmpz:end,end],[1:jmp:end, end]);
-            YY1 = Y1([1:jmpz:end,end],[1:jmp:end, end]);
+            XX1 = X1(zindexes1,[1:jmp:end, end]);
+            YY1 = Y1(zindexes1,[1:jmp:end, end]);
 
-            XX2 = X2([1:jmpz:th_zeta,th_zeta],1:jmp:end);
-            YY2 = Y2([1:jmpz:th_zeta,th_zeta],1:jmp:end);
+            XX2 = X2(zindexes2,1:jmp:end);
+            YY2 = Y2(zindexes2,1:jmp:end);
 
             XX3 = X3(1:jmpz:end,1:jmp:end);
             YY3 = Y3(1:jmpz:end,1:jmp:end);
@@ -181,11 +185,11 @@ function [] = processWaveData(kappa, widths, angles, options)
             mesh(XX3, YY3, h3, 'edgecolor', 'k');   
             hold off,
             view(options.az, options.el);
-            zlim([-0.02,.15])
+            zlim([-0.02,.12])
             %caxis([min(h(:)), max(h(:))]);  % Set the color axis limits based on the data range
             xlabel('X'); ylabel('Y'); zlabel('h');
             %title(['Time evolution of wave profile = ',num2str(t)]);
-            title(mytitle)
+            %title(mytitle)
       
 
             pause(0.1)
@@ -209,11 +213,12 @@ function [] = processWaveData(kappa, widths, angles, options)
     %% Animation in canonical coordinates
     if options.play_movie_canonical
         
-        mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees: Canonical domain'];
+        %mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees: Canonical domain'];
    
         figure
 
-        for i = 1:data.options.frames-2
+        %for i = 1:data.options.frames-2
+        for i = 1:tmp(2)
         h = reshape(data.H(:,i),size(z));
             
         %hh=h;
@@ -234,7 +239,7 @@ function [] = processWaveData(kappa, widths, angles, options)
         zlim([-0.05,0.1])
 
         
-        title(mytitle)
+        %title(mytitle)
         drawnow;
         
 
@@ -243,6 +248,14 @@ function [] = processWaveData(kappa, widths, angles, options)
         
     end
     
+    if options.twoD_plot
+        
+        h = reshape(data.H(:,i),size(z));
+        
+        plot(real(data.data.w),imag(data.data.w),h)
+        
+        
+    end
     
     if options.save_video
        close(vwriter)

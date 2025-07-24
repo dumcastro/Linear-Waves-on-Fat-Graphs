@@ -21,6 +21,7 @@ function [] = processWaveData(kappa, widths, angles, options)
         'plot_canonical', false,...
         'play_movie_phys', false,...
         'play_movie_canonical', true,...
+        'twoD_plot', true,...
         'save_video', false,...
         'jmp_xi', 1,...
         'jmp_zeta', 1,...
@@ -137,7 +138,7 @@ function [] = processWaveData(kappa, widths, angles, options)
         end
         
 
-        mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees'];
+        %mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees'];
 
         tmp = size(data.H);
         
@@ -188,7 +189,7 @@ function [] = processWaveData(kappa, widths, angles, options)
             %caxis([min(h(:)), max(h(:))]);  % Set the color axis limits based on the data range
             xlabel('X'); ylabel('Y'); zlabel('h');
             %title(['Time evolution of wave profile = ',num2str(t)]);
-            title(mytitle)
+            %title(mytitle)
       
 
             pause(0.1)
@@ -212,7 +213,7 @@ function [] = processWaveData(kappa, widths, angles, options)
     %% Animation in canonical coordinates
     if options.play_movie_canonical
         
-        mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees: Canonical domain'];
+        %mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees: Canonical domain'];
    
         figure
 
@@ -238,7 +239,7 @@ function [] = processWaveData(kappa, widths, angles, options)
         zlim([-0.05,0.1])
 
         
-        title(mytitle)
+        %title(mytitle)
         drawnow;
         
 
@@ -247,6 +248,14 @@ function [] = processWaveData(kappa, widths, angles, options)
         
     end
     
+    if options.twoD_plot
+        
+        h = reshape(data.H(:,tmp(2)),size(z));
+        h = h(floor(end/2),:);
+        
+        plot(real(data.data.w),h)
+        
+    end
     
     if options.save_video
        close(vwriter)

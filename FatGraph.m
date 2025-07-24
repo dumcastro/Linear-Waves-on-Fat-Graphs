@@ -34,7 +34,7 @@ classdef FatGraph < handle
 
         function validate_properties(obj)
             % Validate property values
-            assert(numel(obj.angles) == 3, 'Must specify exactly 3 angles');
+            assert(numel(obj.angles) == 3 || numel(obj.angles) == 2, 'Must specify exactly 3 angles');
             assert(obj.edge_length > 0, 'Edge length must be positive');
             assert(all(obj.widths > 0), 'All widths must be positive');
         end
@@ -46,6 +46,9 @@ classdef FatGraph < handle
         end
 
         function cv = get.complex_vertices(obj)
+            
+            if numel(obj.angles) == 3
+            
             % Calculate and return complex number representation
             rl = obj.edge_length;
             w1 = obj.widths(1);
@@ -88,7 +91,66 @@ classdef FatGraph < handle
 
             cv = [cv1, node, flip(cv2)];
 
+            elseif numel(obj.angles) == 2 && ~obj.angles(2) == pi
+                
+            % Calculate and return complex number representation
+            rl = obj.edge_length;
+            w1 = obj.widths(1);
+            w2 = obj.widths(2);
+            a2 = pi + obj.angles(2);
+            %slit = obj.widths(1)*obj.widths(2)/(obj.widths(2)+obj.widths(3)); %zeta coordenate of slit position
 
+            % Calculate intermediate points
+            Q1 = rl + rl*exp(1i*a2) + w2*exp(1i*(a2+pi/2));
+            %lmbd1 = (slit - imag(Q1))/sin(a2);
+            %N1 = Q1 + lmbd1*exp(1i*a2);
+            %Q2 = N1 + rl*exp(1i*a3) + w3*exp(1i*(a3+pi/2));
+
+            %lmbd2 = (w1 - imag(Q2))/sin(a3);
+            %N2 = Q2 + lmbd2*exp(1i*a3);
+
+            % Return complex vertices
+            %cv = [0, rl, rl + rl*exp(1i*a2), Q1, N1, ...
+                 %N1 + rl*exp(1i*a3), Q2, N2, 1i*w1];
+
+
+            lmdb = (w1-imag(Q1))/sin(a2);
+
+            cv1 = [0, rl, rl + rl*exp(1i*a2),Q1];
+
+            v5 = Q1 + lmdb*exp(1i*a2);
+            
+            cv = [cv1, v5, 1i*w1];
+            else
+            % Calculate and return complex number representation
+            rl = obj.edge_length;
+            w1 = obj.widths(1);
+            w2 = obj.widths(2);
+            a2 = pi + obj.angles(2);
+            %slit = obj.widths(1)*obj.widths(2)/(obj.widths(2)+obj.widths(3)); %zeta coordenate of slit position
+
+            % Calculate intermediate points
+            Q1 = rl + rl*exp(1i*a2) + w2*exp(1i*(a2+pi/2));
+            %lmbd1 = (slit - imag(Q1))/sin(a2);
+            %N1 = Q1 + lmbd1*exp(1i*a2);
+            %Q2 = N1 + rl*exp(1i*a3) + w3*exp(1i*(a3+pi/2));
+
+            %lmbd2 = (w1 - imag(Q2))/sin(a3);
+            %N2 = Q2 + lmbd2*exp(1i*a3);
+
+            % Return complex vertices
+            %cv = [0, rl, rl + rl*exp(1i*a2), Q1, N1, ...
+                 %N1 + rl*exp(1i*a3), Q2, N2, 1i*w1];
+
+
+            %lmdb = (w1-imag(Q1))/sin(a2);
+
+            cv1 = [0, rl, rl + rl*exp(1i*a2),Q1];
+
+            v5 = rl + 1i*w1;
+            
+            cv = [cv1, v5, 1i*w1];   
+            end
         end
 
         function h = get.visualization_handle(obj)
