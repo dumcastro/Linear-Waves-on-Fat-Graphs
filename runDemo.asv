@@ -11,7 +11,7 @@ angles = [0, pi - pi/12, pi+pi/12];
 kappa = 0.5;
 
 lambda_f = widths(1)/kappa;
-travel_distance = 3;
+travel_distance = 2;
 Lx = lambda_f * (travel_distance + 1) / 2;
 
 %% Secondary parameters
@@ -28,7 +28,7 @@ createFatGraph(Lx, widths, angles,graph_options);
 processGraphData(Lx, widths, angles,graph_vis_options)
 
 %% Testing evolveWave
-%{
+%
 if numel(widths) == 3
 evolveWave(kappa, widths, angles,wave_options)
 else
@@ -37,4 +37,4 @@ end
 %}
 %% Testing processWave
 
-%processWaveData(kappa, widths, angles,wave_vis_options)
+processWaveData(kappa, widths, angles,wave_vis_options)

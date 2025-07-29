@@ -126,6 +126,7 @@ function [] = processWaveData(kappa, widths, angles, options)
 
     end
     
+    tmp = size(data.H);
     
     %% Play movie and save video
     if options.play_movie_phys
@@ -139,8 +140,6 @@ function [] = processWaveData(kappa, widths, angles, options)
         
 
         %mytitle = ['Angle = ', num2str(rad2deg(angles(3)-angles(2))), ' degrees'];
-
-        tmp = size(data.H);
         
         
         figure
@@ -168,7 +167,7 @@ function [] = processWaveData(kappa, widths, angles, options)
 
             XX1 = X1(zindexes1,[1:jmp:end, end]);
             YY1 = Y1(zindexes1,[1:jmp:end, end]);
-
+            
             XX2 = X2(zindexes2,1:jmp:end);
             YY2 = Y2(zindexes2,1:jmp:end);
 
@@ -249,12 +248,37 @@ function [] = processWaveData(kappa, widths, angles, options)
     end
     
     if options.twoD_plot
+        if numel(widths) == 2
         
-        h = reshape(data.H(:,tmp(2)),size(z));
-        h = h(floor(end/2),:);
+            h = reshape(data.H(:,tmp(2)),size(z));
+            h = h(floor(end/2),:);
+
+            plot(real(data.data.w),h)
         
-        plot(real(data.data.w),h)
-        
+        elseif numel(widths) == 3
+            
+            h = reshape(data.H(:,tmp(2)),size(z));
+            h1 = h(floor(end/2),1:th_xi);
+            h2 = h(floor((end+th_zeta)/2),th_xi:end);
+            h3 = h(floor((1+th_zeta)/2),th_xi:end);
+            
+            xi = real(data.data.w);
+            xi = xi(1,:);
+            
+            figure;
+            subplot(3, 1, 1);
+            plot(xi(1:th_xi),h1)
+            %title('Physical Region');
+
+            subplot(3, 1, 2);
+            plot(xi(th_xi:end),h2)
+            %title('Numerical canonical domain');
+
+            subplot(3, 1, 3);
+            plot(xi(th_xi:end),h3)
+            %title('Canonical domain width = 1');
+   
+        end   
     end
     
     if options.save_video
